@@ -1,45 +1,79 @@
-import type { TreeNode } from "./types";
+import type { TreeNodeType } from "@/components/TreeView/types";
 
-export const mockTreeData: TreeNode[] = [
+export const mockTreeData: TreeNodeType[] = [
   {
     id: "1",
-    label: "Documents",
+    label: "Root 1",
+    level: 0,
     children: [
       {
         id: "1-1",
-        label: "Projets",
+        label: "Child 1-1",
+        level: 1,
         children: [
           {
             id: "1-1-1",
-            label: "react-ui-lab",
+            label: "Child 1-1-1",
+            level: 2,
             children: [
               {
                 id: "1-1-1-1",
-                label: "TreeView",
+                label: "Child 1-1-1-1",
+                level: 3,
                 children: [
                   {
                     id: "1-1-1-1-1",
-                    label: "TreeNode.tsx",
+                    label: "Child 1-1-1-1-1",
+                    level: 4,
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            id: "1-1-2",
+            label: "Child 1-1-2",
+            level: 2,
+          },
+        ],
+      },
+      {
+        id: "1-2",
+        label: "Child 1-2",
+        level: 1,
+      },
+    ],
+  },
+  {
+    id: "2",
+    label: "Root 2",
+    level: 0,
+    children: [
+      {
+        id: "2-1",
+        label: "Child 2-1",
+        level: 1,
+        children: [
+          {
+            id: "2-1-1",
+            label: "Child 2-1-1",
+            level: 2,
+            children: [
+              {
+                id: "2-1-1-1",
+                label: "Child 2-1-1-1",
+                level: 3,
+                children: [
+                  {
+                    id: "2-1-1-1-1",
+                    label: "Child 2-1-1-1-1",
+                    level: 4,
                   },
                 ],
               },
             ],
           },
         ],
-      },
-      {
-        id: "1-2",
-        label: "Notes.txt",
-      },
-    ],
-  },
-  {
-    id: "2",
-    label: "Images",
-    children: [
-      {
-        id: "2-1",
-        label: "Vacances",
       },
     ],
   },

@@ -1,5 +1,6 @@
-export type TreeNode = {
+export type TreeNodeType = {
   id: string;
   label: string;
-  children?: TreeNode[];
+  level: number;
+  children?: TreeNodeType[];
 };
