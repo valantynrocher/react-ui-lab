@@ -5,11 +5,6 @@ import { defineConfig } from "vite";
 
 // https://vite.dev/config/
 import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
-import { fileURLToPath } from "node:url";
-const dirname =
-  typeof __dirname !== "undefined"
-    ? __dirname
-    : path.dirname(fileURLToPath(import.meta.url));
 
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
@@ -36,7 +31,7 @@ export default defineConfig({
           // The plugin will run tests for the stories defined in your Storybook config
           // See options at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon#storybooktest
           storybookTest({
-            configDir: path.join(dirname, ".storybook"),
+            configDir: path.join(__dirname, ".storybook"),
           }),
         ],
         test: {
