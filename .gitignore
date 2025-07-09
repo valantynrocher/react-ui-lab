@@ -1,0 +1,25 @@
+# Node
+node_modules/
+dist/
+.vite/
+.env
+.env.local
+.env.*.local
+
+# IDE / OS
+.DS_Store
+.vscode/
+*.log
+
+# Test / Coverage
+coverage/
+*.test.ts
+*.spec.ts
+
+# Storybook
+storybook-static/
+*.story.tsx
+*.stories.tsx
+
+# TypeScript
+*.tsbuildinfo
