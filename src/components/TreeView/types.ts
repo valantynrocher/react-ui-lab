@@ -4,3 +4,5 @@ export type TreeNodeType = {
   level: number;
   children?: TreeNodeType[];
 };
+
+export type TreeNodeId = TreeNodeType["id"];

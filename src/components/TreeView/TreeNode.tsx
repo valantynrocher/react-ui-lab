@@ -1,4 +1,4 @@
-import type { TreeNodeType } from "@/components/TreeView/types";
+import type { TreeNodeId, TreeNodeType } from "@/components/TreeView/types";
 import { ChevronRight, ExpandMore } from "@mui/icons-material";
 import {
   Collapse,
@@ -6,21 +6,22 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
-import { useState } from "react";
 
 type TreeNodeProps = {
   node: TreeNodeType;
+  isExpanded: (id: TreeNodeId) => boolean;
+  onToggle: (id: TreeNodeId) => void;
 };
 
 const TreeNode = (props: TreeNodeProps) => {
-  const { node } = props;
+  const { node, onToggle, isExpanded } = props;
 
-  const [open, setOpen] = useState(false);
+  const open = isExpanded(node.id);
 
   const hasChildren = node.children ? node.children.length > 0 : false;
 
   const handleToggle = () => {
-    setOpen((prevOpen) => !prevOpen);
+    onToggle(node.id);
   };
 
   return (
@@ -38,7 +39,12 @@ const TreeNode = (props: TreeNodeProps) => {
       {hasChildren ? (
         <Collapse in={open} timeout="auto" unmountOnExit>
           {node.children!.map((childNode) => (
-            <TreeNode key={childNode.id} node={childNode} />
+            <TreeNode
+              key={childNode.id}
+              node={childNode}
+              onToggle={onToggle}
+              isExpanded={isExpanded}
+            />
           ))}
         </Collapse>
       ) : null}
