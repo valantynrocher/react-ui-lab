@@ -1,66 +1,96 @@
-import type { TreeNodeId, TreeNodeType } from "@/components/TreeView/types";
-import { ChevronRight, ExpandMore } from "@mui/icons-material";
-import {
-  Collapse,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-} from "@mui/material";
+import type { UseOpenCloseInteractionOutput } from "@/components/TreeView/hooks/useOpenCloseInteraction";
+import type { UseKeyboardInteractionOutput } from "@/components/TreeView/hooks/useKeyboardInteraction";
+import type { TreeNodeType } from "@/components/TreeView/types";
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
+import Collapse from "@mui/material/Collapse";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import { useCallback } from "react";
 
-type TreeNodeProps = {
+export interface TreeNodeProps
+  extends Pick<UseOpenCloseInteractionOutput, "isOpenedFn">,
+    Pick<UseKeyboardInteractionOutput, "isSelectedFn"> {
   node: TreeNodeType;
-  isExpanded: (id: TreeNodeId) => boolean;
-  isSelected: (id: TreeNodeId) => boolean;
-  onToggleExpand: (id: TreeNodeId) => void;
-  onSelect: (id: TreeNodeId) => void;
-};
+  onToggleClick: UseOpenCloseInteractionOutput["toggleNode"];
+  onSelectClick: UseKeyboardInteractionOutput["selectNode"];
+}
 
-const TreeNode = (props: TreeNodeProps) => {
-  const { node, onToggleExpand, isExpanded, onSelect, isSelected } = props;
+const TreeNodeItemIcon = (props: React.ComponentProps<typeof ListItemIcon>) => (
+  <ListItemIcon
+    sx={{
+      minWidth: 24,
+      ...props.sx,
+    }}
+    {...props}
+  />
+);
 
-  const open = isExpanded(node.id);
-  const selected = isSelected(node.id);
+const TreeNode = ({
+  node,
+  onToggleClick,
+  isOpenedFn,
+  onSelectClick,
+  isSelectedFn,
+}: TreeNodeProps) => {
+  const isOpen = isOpenedFn(node.id);
+  const isSelected = isSelectedFn(node.id);
   const hasChildren = node.children ? node.children.length > 0 : false;
 
-  const handleToggle = () => {
-    onToggleExpand(node.id);
+  const handleToggleClick = () => {
+    onToggleClick(node.id);
   };
 
-  const handleSelect = () => {
-    onSelect(node.id);
-  };
+  const handleSelectNodeClick: React.MouseEventHandler<HTMLDivElement> =
+    useCallback(
+      (event) => {
+        if (event.type !== "click") return;
+
+        onSelectClick(node.id);
+      },
+      [node.id, onSelectClick]
+    );
 
   return (
     <li
       role="treeitem"
-      aria-expanded={open}
-      aria-selected={selected}
+      aria-expanded={isOpen}
+      aria-selected={isSelected}
       style={{ listStyle: "none" }}
+      tabIndex={isSelected ? 0 : -1}
     >
       <ListItemButton
-        selected={selected}
-        onClick={handleSelect}
+        selected={isSelected}
+        onClick={handleSelectNodeClick}
         sx={{ pl: node.level * 2 }}
       >
-        <ListItemIcon
-          onClick={hasChildren ? handleToggle : undefined}
-          sx={{ minWidth: 24 }}
-        >
-          {hasChildren ? open ? <ExpandMore /> : <ChevronRight /> : null}
-        </ListItemIcon>
+        {hasChildren ? (
+          <TreeNodeItemIcon onClick={handleToggleClick}>
+            {isOpen ? <ExpandMore /> : <ExpandLess />}
+          </TreeNodeItemIcon>
+        ) : (
+          <TreeNodeItemIcon />
+        )}
         <ListItemText primary={node.label} />
       </ListItemButton>
 
       {hasChildren ? (
-        <Collapse in={open} timeout="auto" unmountOnExit>
+        <Collapse
+          in={isOpen}
+          timeout="auto"
+          unmountOnExit
+          component="ul"
+          sx={{ pl: node.level * 2 }}
+        >
           {node.children!.map((childNode) => (
             <TreeNode
               key={childNode.id}
               node={childNode}
-              onToggleExpand={onToggleExpand}
-              isExpanded={isExpanded}
-              onSelect={onSelect}
-              isSelected={isSelected}
+              onToggleClick={onToggleClick}
+              isOpenedFn={isOpenedFn}
+              onSelectClick={onSelectClick}
+              isSelectedFn={isSelectedFn}
             />
           ))}
         </Collapse>

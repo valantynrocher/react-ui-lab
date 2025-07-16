@@ -1,28 +1,45 @@
-import useExpanded from "@/components/TreeView/hooks/useExpanded";
-import useSelected from "@/components/TreeView/hooks/useSelected";
+import useOpenCloseInteraction from "@/components/TreeView/hooks/useOpenCloseInteraction";
+import useKeyboardInteraction from "@/components/TreeView/hooks/useKeyboardInteraction";
 import { mockTreeData } from "@/components/TreeView/mockTree";
 import TreeNode from "@/components/TreeView/TreeNode";
-import { Stack, Typography } from "@mui/material";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 
 const TreeView = () => {
-  const { expandedIds, toggle, isExpanded } = useExpanded();
-  const { select, isSelected } = useSelected();
+  const { openedIds, toggleNode, isOpenedFn, visibleNodes } =
+    useOpenCloseInteraction({
+      treeData: mockTreeData,
+    });
+  const { isSelectedFn, handleKeyDown, selectNode } = useKeyboardInteraction({
+    visibleNodes,
+    openedIds,
+    initialSelectedId: null,
+    toggleNode,
+  });
 
   return (
     <>
       <Typography>
-        Les noeuds ouverts sont {Array.from(expandedIds).join(", ")}
+        Les noeuds ouverts sont {Array.from(openedIds).join(", ")}
       </Typography>
       <Stack>
-        <ul role="tree" style={{ padding: 0, margin: "auto", width: 300 }}>
+        <ul
+          role="tree"
+          onKeyDown={handleKeyDown}
+          style={{
+            padding: 0,
+            margin: "auto",
+            width: 300,
+          }}
+        >
           {mockTreeData.map((node) => (
             <TreeNode
               key={node.id}
               node={node}
-              isExpanded={isExpanded}
-              onToggleExpand={toggle}
-              onSelect={select}
-              isSelected={isSelected}
+              isOpenedFn={isOpenedFn}
+              onToggleClick={toggleNode}
+              onSelectClick={selectNode}
+              isSelectedFn={isSelectedFn}
             />
           ))}
         </ul>
