@@ -1,11 +1,12 @@
 import type { TreeNodeId, TreeNodeType } from "@/components/TreeView/types";
 import { useCallback, useState } from "react";
 import traverseTree from "@/components/TreeView/utils/traverse";
+import type { TreeViewProps } from "@/components/TreeView/props";
 
-export interface UseOpenCloseInteractionProps {
-  treeData: TreeNodeType[];
-  initialState?: TreeNodeId[];
-}
+export type UseOpenCloseInteractionProps = Pick<
+  TreeViewProps,
+  "initialOpenedIds" | "treeData"
+>;
 
 export type UseOpenCloseInteractionOutput = {
   openedIds: Set<TreeNodeId>;
@@ -33,10 +34,10 @@ const getVisibleNodes = (
 
 const useOpenCloseInteraction = ({
   treeData,
-  initialState,
+  initialOpenedIds,
 }: UseOpenCloseInteractionProps): UseOpenCloseInteractionOutput => {
   const [openedIds, setOpenedIds] = useState<Set<TreeNodeId>>(
-    new Set(initialState)
+    new Set(initialOpenedIds)
   );
 
   const visibleNodes = getVisibleNodes(treeData, openedIds);

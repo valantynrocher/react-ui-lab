@@ -1,28 +1,39 @@
-import useOpenCloseInteraction from "@/components/TreeView/hooks/useOpenCloseInteraction";
+import { TreeViewRenderingProvider } from "@/components/TreeView/Contexts/RenderingContext";
 import useKeyboardInteraction from "@/components/TreeView/hooks/useKeyboardInteraction";
-import { mockTreeData } from "@/components/TreeView/mockTree";
+import useOpenCloseInteraction from "@/components/TreeView/hooks/useOpenCloseInteraction";
+import type { TreeViewProps } from "@/components/TreeView/props";
 import TreeNode from "@/components/TreeView/TreeNode";
 import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
 
-const TreeView = () => {
+const TreeView = ({
+  treeData,
+  initialSelectedId,
+  initialOpenedIds,
+  slots,
+  slotProps,
+  renderStartIcon,
+  renderLabel,
+}: TreeViewProps) => {
   const { openedIds, toggleNode, isOpenedFn, visibleNodes } =
     useOpenCloseInteraction({
-      treeData: mockTreeData,
+      treeData,
+      initialOpenedIds,
     });
   const { isSelectedFn, handleKeyDown, selectNode } = useKeyboardInteraction({
+    initialSelectedId,
     visibleNodes,
     openedIds,
-    initialSelectedId: null,
     toggleNode,
   });
 
   return (
-    <>
-      <Typography>
-        Les noeuds ouverts sont {Array.from(openedIds).join(", ")}
-      </Typography>
-      <Stack>
+    <TreeViewRenderingProvider
+      slots={slots}
+      slotProps={slotProps}
+      renderStartIcon={renderStartIcon}
+      renderLabel={renderLabel}
+    >
+      <Stack alignItems={"center"}>
         <ul
           role="tree"
           onKeyDown={handleKeyDown}
@@ -32,19 +43,19 @@ const TreeView = () => {
             width: 300,
           }}
         >
-          {mockTreeData.map((node) => (
+          {treeData.map((node) => (
             <TreeNode
               key={node.id}
               node={node}
               isOpenedFn={isOpenedFn}
-              onToggleClick={toggleNode}
-              onSelectClick={selectNode}
+              toggleNode={toggleNode}
+              selectNode={selectNode}
               isSelectedFn={isSelectedFn}
             />
           ))}
         </ul>
       </Stack>
-    </>
+    </TreeViewRenderingProvider>
   );
 };
 

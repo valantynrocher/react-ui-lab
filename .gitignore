@@ -18,8 +18,6 @@ coverage/
 
 # Storybook
 storybook-static/
-*.story.tsx
-*.stories.tsx
 
 # TypeScript
 *.tsbuildinfo
