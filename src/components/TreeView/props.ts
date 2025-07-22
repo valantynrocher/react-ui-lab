@@ -1,16 +1,15 @@
+import type { TreeViewInteractionContextProps } from "@/components/TreeView/Contexts/InteractionContext";
 import type {
-  DefaultTreeViewSlots,
-  TreeViewRenderingContextProps,
-  TreeViewSlots,
+  TreeViewRenderingContextValue,
+  TreeViewRenderingProviderProps,
 } from "@/components/TreeView/Contexts/RenderingContext";
-import type { TreeNodeId, TreeNodeType } from "@/components/TreeView/types";
 
-export interface TreeViewProps<S extends TreeViewSlots = DefaultTreeViewSlots>
-  extends TreeViewRenderingContextProps<S> {
-  /** The data to display in the tree view */
-  treeData: TreeNodeType[];
-  /** The initial selected node ID */
-  initialSelectedId: TreeNodeId | null;
-  /** The initial opened node IDs */
-  initialOpenedIds?: TreeNodeId[] | Set<TreeNodeId>;
+export interface TreeViewProps
+  extends Omit<
+      TreeViewRenderingProviderProps,
+      "children" | "slots" | "slotProps"
+    >,
+    Omit<TreeViewInteractionContextProps, "children"> {
+  slots?: TreeViewRenderingContextValue["slots"];
+  slotProps?: TreeViewRenderingContextValue["slotProps"];
 }

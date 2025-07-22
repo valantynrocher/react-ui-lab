@@ -1,4 +1,7 @@
-export type TraverseCallback<T> = (node: T, parent?: T) => void;
+export type TraverseCallback<T extends { children?: T[] }> = (
+  node: T,
+  parent?: T
+) => void;
 
 const traverseTree = <T extends { children?: T[] }>(
   tree: T[],
@@ -13,4 +16,17 @@ const traverseTree = <T extends { children?: T[] }>(
   }
 };
 
+const createTraverseTree =
+  <T extends { children?: T[] }>(callback: TraverseCallback<T>) =>
+  (tree: T[], parent?: T) => {
+    const _traverse = createTraverseTree(callback);
+    for (const node of tree) {
+      callback(node, parent);
+      if (node.children) {
+        _traverse(node.children, node);
+      }
+    }
+  };
+
 export default traverseTree;
+export { createTraverseTree };

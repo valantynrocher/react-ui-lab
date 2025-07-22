@@ -1,3 +1,4 @@
+import { TreeViewInteractionHooks } from "@/components/TreeView/Contexts/InteractionContext";
 import { useTreeViewRenderingContext } from "@/components/TreeView/Contexts/RenderingContext";
 import TreeNodeToggler from "@/components/TreeView/TreeNode/TreeNodeToggler";
 import type { TreeNodeProps } from "@/components/TreeView/TreeNode/props";
@@ -6,18 +7,16 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import { useCallback } from "react";
 
-const TreeNode = ({
-  node,
-  toggleNode,
-  isOpenedFn,
-  selectNode,
-  isSelectedFn,
-}: TreeNodeProps) => {
+const TreeNode = ({ node }: TreeNodeProps) => {
   const { renderLabel, renderStartIcon } = useTreeViewRenderingContext();
+  const { toggleNode, isOpenedFn } =
+    TreeViewInteractionHooks.useExpansionInteraction();
+  const { selectNode, isSelectedFn } =
+    TreeViewInteractionHooks.useSelectionInteraction();
 
   const isOpen = isOpenedFn(node.id);
   const isSelected = isSelectedFn(node.id);
-  const hasChildren = node.children ? node.children.length > 0 : false;
+  const hasChildren = Array.isArray(node.children) && node.children.length > 0;
 
   const handleToggleClick = useCallback(() => {
     toggleNode(node.id);
@@ -40,6 +39,7 @@ const TreeNode = ({
       aria-selected={isSelected}
       style={{ listStyle: "none" }}
       tabIndex={isSelected ? 0 : -1}
+      aria-level={node.level + 1}
     >
       <ListItemButton
         selected={isSelected}
@@ -64,15 +64,8 @@ const TreeNode = ({
           sx={{ pl: node.level * 2 }}
           role="group"
         >
-          {node.children!.map((childNode) => (
-            <TreeNode
-              key={childNode.id}
-              node={childNode}
-              toggleNode={toggleNode}
-              isOpenedFn={isOpenedFn}
-              selectNode={selectNode}
-              isSelectedFn={isSelectedFn}
-            />
+          {node.children?.map((childNode) => (
+            <TreeNode key={childNode.id} node={childNode} />
           ))}
         </Collapse>
       ) : null}

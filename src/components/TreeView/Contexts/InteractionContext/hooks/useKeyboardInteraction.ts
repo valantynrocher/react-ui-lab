@@ -1,5 +1,6 @@
-import type { UseOpenCloseInteractionOutput } from "@/components/TreeView/hooks/useOpenCloseInteraction";
-import type { TreeViewProps } from "@/components/TreeView/props";
+import type { TreeViewInteractionContextValue } from "@/components/TreeView/Contexts/InteractionContext";
+import type { UseOpenCloseInteractionOutput } from "@/components/TreeView/Contexts/InteractionContext/hooks/useOpenCloseInteraction";
+import type { TreeViewInteractionContextProps } from "@/components/TreeView/Contexts/InteractionContext/props";
 import type { TreeNodeId } from "@/components/TreeView/types";
 import isAllowedEventKey, {
   type AllowedEventKeys,
@@ -8,24 +9,23 @@ import { useCallback, useState } from "react";
 
 export type UseKeyboardInteractionProps = Pick<
   UseOpenCloseInteractionOutput,
-  "toggleNode" | "visibleNodes" | "openedIds"
+  "openedIds" | "visibleNodes" | "toggleNode"
 > &
-  Pick<TreeViewProps, "initialSelectedId">;
+  Pick<TreeViewInteractionContextProps, "defaultSelectedId">;
 
-export type UseKeyboardInteractionOutput = {
-  isSelectedFn: (id: TreeNodeId) => boolean;
-  handleKeyDown: (event: React.KeyboardEvent) => void;
-  selectNode: (id: TreeNodeId) => void;
-};
+export type UseKeyboardInteractionOutput = Pick<
+  TreeViewInteractionContextValue,
+  "isSelectedFn" | "handleKeyDown" | "selectNode"
+>;
 
 const useKeyboardInteraction = ({
   openedIds,
-  initialSelectedId,
+  defaultSelectedId,
   toggleNode,
   visibleNodes,
 }: UseKeyboardInteractionProps): UseKeyboardInteractionOutput => {
   const [selectedNodeId, setSelectedNodeId] = useState<TreeNodeId | null>(
-    initialSelectedId
+    defaultSelectedId
   );
 
   const isSelectedFn = useCallback(

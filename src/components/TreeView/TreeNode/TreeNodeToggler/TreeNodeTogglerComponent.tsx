@@ -1,7 +1,5 @@
 import { useTreeViewRenderingContext } from "@/components/TreeView/Contexts/RenderingContext";
 import MuiListItemIcon from "@mui/material/ListItemIcon";
-import ExpandLess from "@mui/icons-material/ExpandLess";
-import ExpandMore from "@mui/icons-material/ExpandMore";
 import type { TreeNodeTogglerProps } from "./props";
 
 const TreeItemIcon = (props: React.ComponentProps<typeof MuiListItemIcon>) => (
@@ -14,31 +12,21 @@ const TreeItemIcon = (props: React.ComponentProps<typeof MuiListItemIcon>) => (
   />
 );
 
-const TreeNodeToggler = ({
+const TreeNodeTogglerComponent = ({
   isOpen,
   onClick,
   hasChildren,
 }: TreeNodeTogglerProps) => {
-  const {
-    slots = {
-      expandIcon: ExpandMore,
-      collapseIcon: ExpandLess,
-    },
-    slotProps = {
-      expandIcon: {},
-      collapseIcon: {},
-    },
-  } = useTreeViewRenderingContext();
+  const { slots, slotProps } = useTreeViewRenderingContext();
 
-  const ExpandIcon = slots.expandIcon;
-  const CollapseIcon = slots.collapseIcon;
+  const { ExpandIcon, CollapseIcon } = slots;
 
   return hasChildren ? (
     <TreeItemIcon onClick={onClick}>
       {isOpen ? (
-        <CollapseIcon {...slotProps.collapseIcon} />
+        <CollapseIcon {...slotProps.CollapseIcon} />
       ) : (
-        <ExpandIcon {...slotProps.expandIcon} />
+        <ExpandIcon {...slotProps.ExpandIcon} />
       )}
     </TreeItemIcon>
   ) : (
@@ -46,4 +34,4 @@ const TreeNodeToggler = ({
   );
 };
 
-export default TreeNodeToggler;
+export default TreeNodeTogglerComponent;

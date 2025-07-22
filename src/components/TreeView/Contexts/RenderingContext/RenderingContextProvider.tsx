@@ -1,15 +1,10 @@
 import { TreeViewRenderingContext } from "@/components/TreeView/Contexts/RenderingContext";
+import type { TreeViewRenderingProviderProps } from "./props";
 import type {
   DefaultTreeViewSlots,
-  TreeViewRenderingContextProps,
+  TreeViewRenderingContextValue,
   TreeViewSlots,
-} from "@/components/TreeView/Contexts/RenderingContext/props";
-
-type TreeViewRenderingProviderProps<
-  S extends TreeViewSlots = DefaultTreeViewSlots
-> = TreeViewRenderingContextProps<S> & {
-  children: React.ReactNode;
-};
+} from "@/components/TreeView/Contexts/RenderingContext/context";
 
 const TreeViewRenderingProvider = <
   S extends TreeViewSlots = DefaultTreeViewSlots
@@ -28,7 +23,7 @@ const TreeViewRenderingProvider = <
           slotProps,
           renderStartIcon,
           renderLabel,
-        } as unknown as TreeViewRenderingContextProps
+        } as unknown as TreeViewRenderingContextValue
       }
     >
       {children}
