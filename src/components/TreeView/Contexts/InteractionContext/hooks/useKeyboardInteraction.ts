@@ -5,13 +5,16 @@ import type { TreeNodeId } from "@/components/TreeView/types";
 import isAllowedEventKey, {
   type AllowedEventKeys,
 } from "@/components/TreeView/utils/AllowedEventKeys";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 export type UseKeyboardInteractionProps = Pick<
   UseOpenCloseInteractionOutput,
   "openedIds" | "visibleNodes" | "toggleNode"
 > &
-  Pick<TreeViewInteractionContextProps, "defaultSelectedId">;
+  Pick<
+    TreeViewInteractionContextProps,
+    "defaultSelectedId" | "selectedId" | "onSelect"
+  >;
 
 export type UseKeyboardInteractionOutput = Pick<
   TreeViewInteractionContextValue,
@@ -23,9 +26,24 @@ const useKeyboardInteraction = ({
   defaultSelectedId,
   toggleNode,
   visibleNodes,
+  onSelect,
+  selectedId: controlledSelectedId,
 }: UseKeyboardInteractionProps): UseKeyboardInteractionOutput => {
-  const [selectedNodeId, setSelectedNodeId] = useState<TreeNodeId | null>(
-    defaultSelectedId
+  const [internalSelectedNodeId, setInternalSelectedNodeId] =
+    useState<TreeNodeId | null>(defaultSelectedId ?? null);
+
+  const isControlled = controlledSelectedId !== undefined;
+
+  const selectedNodeId = useMemo(
+    () => (isControlled ? controlledSelectedId : internalSelectedNodeId),
+    [controlledSelectedId, internalSelectedNodeId, isControlled]
+  );
+
+  const setSelectedNodeId = useCallback(
+    (next: typeof internalSelectedNodeId) => {
+      if (!isControlled) setInternalSelectedNodeId(next);
+    },
+    [isControlled]
   );
 
   const isSelectedFn = useCallback(
@@ -35,6 +53,7 @@ const useKeyboardInteraction = ({
 
   const selectNode = (id: TreeNodeId | null) => {
     setSelectedNodeId(id);
+    onSelect?.(id);
   };
 
   const isSelectedIsExtended = useCallback(

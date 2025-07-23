@@ -2,11 +2,11 @@ import type { TreeViewInteractionContextValue } from "@/components/TreeView/Cont
 import type { TreeViewInteractionContextProps } from "@/components/TreeView/Contexts/InteractionContext/props";
 import type { TreeNodeId, TreeNodeType } from "@/components/TreeView/types";
 import traverseTree from "@/components/TreeView/utils/traverse";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 export type UseOpenCloseInteractionProps = Pick<
   TreeViewInteractionContextProps,
-  "defaultOpenedIds" | "treeData"
+  "defaultOpenedIds" | "treeData" | "openedIds" | "onToggle"
 >;
 
 export type UseOpenCloseInteractionOutput = Pick<
@@ -34,9 +34,25 @@ const getVisibleNodes = (
 const useOpenCloseInteraction = ({
   treeData,
   defaultOpenedIds,
+  openedIds: controlledOpenedIds,
+  onToggle,
 }: UseOpenCloseInteractionProps): UseOpenCloseInteractionOutput => {
-  const [openedIds, setOpenedIds] = useState<Set<TreeNodeId>>(
+  const [internalOpenedIds, setInternalOpenedIds] = useState<Set<TreeNodeId>>(
     new Set(defaultOpenedIds)
+  );
+
+  const isControlled = controlledOpenedIds !== undefined;
+
+  const openedIds = useMemo(
+    () => (isControlled ? new Set(controlledOpenedIds) : internalOpenedIds),
+    [controlledOpenedIds, internalOpenedIds, isControlled]
+  );
+
+  const setOpenedIds = useCallback(
+    (next: typeof internalOpenedIds) => {
+      if (!isControlled) setInternalOpenedIds(next);
+    },
+    [isControlled]
   );
 
   const visibleNodes = getVisibleNodes(treeData, openedIds);
@@ -47,15 +63,12 @@ const useOpenCloseInteraction = ({
   );
 
   const toggleNode = (id: TreeNodeId) => {
-    setOpenedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
-      return next;
-    });
+    const next = new Set(openedIds);
+    const isOpened = next.has(id);
+    if (isOpened) next.delete(id);
+    else next.add(id);
+    setOpenedIds(next);
+    onToggle?.(id);
   };
 
   return {

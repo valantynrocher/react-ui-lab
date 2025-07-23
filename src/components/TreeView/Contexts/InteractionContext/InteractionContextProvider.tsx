@@ -8,11 +8,16 @@ const InteractionContextProvider = ({
   defaultSelectedId,
   defaultOpenedIds,
   treeData,
+  onSelect,
+  onToggle,
+  ...props
 }: TreeViewInteractionContextProps) => {
   const { openedIds, toggleNode, isOpenedFn, visibleNodes } =
     useOpenCloseInteraction({
       treeData,
       defaultOpenedIds,
+      openedIds: props.openedIds,
+      onToggle,
     });
 
   const { isSelectedFn, handleKeyDown, selectNode } = useKeyboardInteraction({
@@ -20,6 +25,8 @@ const InteractionContextProvider = ({
     visibleNodes,
     openedIds,
     toggleNode,
+    onSelect,
+    selectedId: props.selectedId,
   });
 
   return (
