@@ -1,17 +1,35 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type {
-  InternalNode,
-  MapToInternal,
-  NodeRequiredShape,
-  TreeNodeId,
-} from "./nodes";
+import type { TreeNodeId } from "./nodes";
 import type {
   DefaultSlots,
   ExternalSlots,
   InferExternalSlotProps,
 } from "./slots";
 
-interface OptionsBase<S extends ExternalSlots = DefaultSlots> {
+export type TreeViewOptions<S extends ExternalSlots = DefaultSlots> = {
+  /**
+   * Data structure representing the tree
+   */
+  nodes: any[];
+  /**
+   * function to give if the uniq identifier is not called "id"
+   * @param node
+   * @returns the uniq identifier
+   */
+  getNodeId?: (node: any) => any;
+  /**
+   * function to give if the node label is not called "label"
+   * @param node
+   * @returns the node label
+   */
+  getNodeLabel?: (node: any) => any;
+  /**
+   * function to give if the node children is not called "children"
+   * @param node
+   * @returns the node children
+   */
+  getNodeChildren?: (node: any) => any[];
+
   slots?: ExternalSlots;
   slotProps?: InferExternalSlotProps<S>;
   renderLabel?: (node: any) => React.ReactNode;
@@ -19,30 +37,14 @@ interface OptionsBase<S extends ExternalSlots = DefaultSlots> {
 
   selectedId?: TreeNodeId;
   defaultSelectedId?: TreeNodeId;
+  /**
+   * Use onSelectionClick to track a selected item
+   * @param id
+   * @returns
+   */
   onSelectionClick?: (id: TreeNodeId | null) => void;
 
   expandedIds?: TreeNodeId[];
   defaultExpandedIds?: TreeNodeId[];
   onExpansionClick?: (id: TreeNodeId, action: "open" | "close") => void;
-}
-
-export interface OptionsWithExternalDataType<Node> {
-  /**
-   * Data structure representing the tree
-   */
-  nodes: Node[];
-  mapToInternal: MapToInternal<Node>;
-}
-
-export interface OptionsWithInternalData {
-  /**
-   * Data structure representing the tree
-   */
-  nodes: InternalNode[];
-}
-
-export type TreeViewOptions<
-  Node extends unknown | NodeRequiredShape = unknown,
-  S extends ExternalSlots = DefaultSlots
-> = OptionsBase<S> &
-  (OptionsWithExternalDataType<Node> | OptionsWithInternalData);
+};

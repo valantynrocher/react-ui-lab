@@ -1,12 +1,9 @@
-import type {
-  OptionsWithExternalDataType,
-  OptionsWithInternalData,
-} from "@/components/TreeView/types/TreeViewOptions";
+import type { TreeViewOptions } from "@/components/TreeView/types/TreeViewOptions";
 import { type PropsWithChildren } from "react";
 
-export type DataProviderInternalDataProps =
-  PropsWithChildren<OptionsWithInternalData>;
-
-export type DataProviderExternalDataProps<Node> = PropsWithChildren<
-  OptionsWithExternalDataType<Node>
+export type DataProviderProps = PropsWithChildren<
+  Pick<
+    TreeViewOptions,
+    "nodes" | "getNodeChildren" | "getNodeId" | "getNodeLabel"
+  >
 >;

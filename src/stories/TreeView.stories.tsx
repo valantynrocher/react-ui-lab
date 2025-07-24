@@ -31,7 +31,7 @@ const meta = {
     },
     defaultExpandedIds: {
       control: "text",
-      description: "Array of IDs of initially opened nodes",
+      description: "Array of IDs of initially expanded nodes",
     },
     defaultSelectedId: {
       control: "text",
