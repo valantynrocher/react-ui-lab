@@ -1,6 +1,7 @@
 import { CustomizationProvider } from "@/components/TreeView/Contexts/CustomizationContext";
 import type { CustomizationProviderProps } from "@/components/TreeView/Contexts/CustomizationContext/types/CustomizationProviderProps";
 import { DataProvider } from "@/components/TreeView/Contexts/DataContext";
+import type { DataProviderProps } from "@/components/TreeView/Contexts/DataContext/types/DataContextProviderProps";
 import { ExpansionProvider } from "@/components/TreeView/Contexts/ExpansionContext";
 import type { ExpansionProviderProps } from "@/components/TreeView/Contexts/ExpansionContext/types/ExpansionProviderProps";
 import { KeyboardProvider } from "@/components/TreeView/Contexts/KeyboardContext";
@@ -23,11 +24,22 @@ const splitProps = ({
   onExpansionClick,
   expandedIds,
   selectedId,
+  nodes,
+  getNodeChildren,
+  getNodeId,
+  getNodeLabel,
 }: TreeViewOptions): {
+  dataProviderProps: Omit<DataProviderProps, "children">;
   expansionProviderProps: Omit<ExpansionProviderProps, "children">;
   selectionProviderProps: Omit<SelectionProviderProps, "children">;
   customizationProviderProps: Omit<CustomizationProviderProps, "children">;
 } => ({
+  dataProviderProps: {
+    nodes,
+    getNodeChildren,
+    getNodeId,
+    getNodeLabel,
+  },
   customizationProviderProps: {
     renderLabel,
     renderStartIcon,
@@ -54,13 +66,14 @@ const splitProps = ({
 
 const TreeView = (props: TreeViewOptions) => {
   const {
+    dataProviderProps,
     customizationProviderProps,
     expansionProviderProps,
     selectionProviderProps,
   } = splitProps(props);
 
   return (
-    <DataProvider nodes={props.nodes}>
+    <DataProvider {...dataProviderProps}>
       <CustomizationProvider {...customizationProviderProps}>
         <ExpansionProvider {...expansionProviderProps}>
           <SelectionProvider {...selectionProviderProps}>
