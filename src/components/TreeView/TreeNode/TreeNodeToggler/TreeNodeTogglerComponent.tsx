@@ -1,4 +1,4 @@
-import { useTreeViewRenderingContext } from "@/components/TreeView/Contexts/RenderingContext";
+import { useCustomizationContext } from "@/components/TreeView/Contexts/CustomizationContext";
 import MuiListItemIcon from "@mui/material/ListItemIcon";
 import type { TreeNodeTogglerProps } from "./props";
 
@@ -17,7 +17,7 @@ const TreeNodeTogglerComponent = ({
   onClick,
   hasChildren,
 }: TreeNodeTogglerProps) => {
-  const { slots, slotProps } = useTreeViewRenderingContext();
+  const { slots, slotProps } = useCustomizationContext();
 
   const { ExpandIcon, CollapseIcon } = slots;
 

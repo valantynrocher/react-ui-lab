@@ -1,20 +1,21 @@
-import { TreeViewInteractionHooks } from "@/components/TreeView/Contexts/InteractionContext";
+import { useDataContext } from "@/components/TreeView/Contexts/DataContext";
+import { useKeyboardContext } from "@/components/TreeView/Contexts/KeyboardContext";
 import TreeNode from "@/components/TreeView/TreeNode";
 
 const TreeComponent = () => {
-  const { treeData } = TreeViewInteractionHooks.useInteractionState();
-  const { handleKeyDown } = TreeViewInteractionHooks.useKeyboardInteraction();
+  const { nodes } = useDataContext();
+  const { onKeyDown } = useKeyboardContext();
   return (
     <ul
       role="tree"
-      onKeyDown={handleKeyDown}
+      onKeyDown={onKeyDown}
       style={{
         padding: 0,
         margin: "auto",
         width: 300,
       }}
     >
-      {treeData.map((node) => (
+      {nodes.map((node) => (
         <TreeNode key={node.id} node={node} />
       ))}
     </ul>

@@ -1,5 +1,5 @@
 import type { InternalNode } from "@/components/TreeView/types/nodes";
 
-export interface TreeNodeProps {
-  node: InternalNode;
-}
+export type DataContextType = {
+  nodes: InternalNode[];
+};

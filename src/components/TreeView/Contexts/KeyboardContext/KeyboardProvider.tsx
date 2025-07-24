@@ -1,67 +1,22 @@
-import type { TreeViewInteractionContextValue } from "@/components/TreeView/Contexts/InteractionContext";
-import type { UseOpenCloseInteractionOutput } from "@/components/TreeView/Contexts/InteractionContext/hooks/useOpenCloseInteraction";
-import type { TreeViewInteractionContextProps } from "@/components/TreeView/Contexts/InteractionContext/props";
-import type { TreeNodeId } from "@/components/TreeView/types";
+import { useExpansionContext } from "@/components/TreeView/Contexts/ExpansionContext";
+import KeyboardContext from "@/components/TreeView/Contexts/KeyboardContext/KeyboardContext";
+import type { KeyboardProviderProps } from "@/components/TreeView/Contexts/KeyboardContext/types/KeyboardProviderProps";
+import { useSelectionContext } from "@/components/TreeView/Contexts/SelectionContext";
 import isAllowedEventKey, {
   type AllowedEventKeys,
 } from "@/components/TreeView/utils/AllowedEventKeys";
-import { useCallback, useMemo, useState } from "react";
+import React, { useCallback } from "react";
 
-export type UseKeyboardInteractionProps = Pick<
-  UseOpenCloseInteractionOutput,
-  "openedIds" | "visibleNodes" | "toggleNode"
-> &
-  Pick<
-    TreeViewInteractionContextProps,
-    "defaultSelectedId" | "selectedId" | "onSelect"
-  >;
-
-export type UseKeyboardInteractionOutput = Pick<
-  TreeViewInteractionContextValue,
-  "isSelectedFn" | "handleKeyDown" | "selectNode"
->;
-
-const useKeyboardInteraction = ({
-  openedIds,
-  defaultSelectedId,
-  toggleNode,
-  visibleNodes,
-  onSelect,
-  selectedId: controlledSelectedId,
-}: UseKeyboardInteractionProps): UseKeyboardInteractionOutput => {
-  const [internalSelectedNodeId, setInternalSelectedNodeId] =
-    useState<TreeNodeId | null>(defaultSelectedId ?? null);
-
-  const isControlled = controlledSelectedId !== undefined;
-
-  const selectedNodeId = useMemo(
-    () => (isControlled ? controlledSelectedId : internalSelectedNodeId),
-    [controlledSelectedId, internalSelectedNodeId, isControlled]
-  );
-
-  const setSelectedNodeId = useCallback(
-    (next: typeof internalSelectedNodeId) => {
-      if (!isControlled) setInternalSelectedNodeId(next);
-    },
-    [isControlled]
-  );
-
-  const isSelectedFn = useCallback(
-    (id: TreeNodeId) => selectedNodeId === id,
-    [selectedNodeId]
-  );
-
-  const selectNode = (id: TreeNodeId | null) => {
-    setSelectedNodeId(id);
-    onSelect?.(id);
-  };
+const KeyboardProvider = ({ children }: KeyboardProviderProps) => {
+  const { selectNode, selectedNodeId } = useSelectionContext();
+  const { expandedIds, visibleNodes, toggleExpansion } = useExpansionContext();
 
   const isSelectedIsExtended = useCallback(
-    () => (selectedNodeId ? openedIds.has(selectedNodeId) : false),
-    [selectedNodeId, openedIds]
+    () => (selectedNodeId ? expandedIds.has(selectedNodeId) : false),
+    [expandedIds, selectedNodeId]
   );
 
-  const handleKeyDown = (event: React.KeyboardEvent) => {
+  const onKeyDown = (event: React.KeyboardEvent) => {
     event.preventDefault();
     event.stopPropagation();
 
@@ -100,14 +55,14 @@ const useKeyboardInteraction = ({
             );
           } else {
             // If the node is not expanded, toggle it
-            toggleNode(selectedNodeId);
+            toggleExpansion(selectedNodeId);
           }
         }
       },
       ArrowLeft: () => {
         if (isSelectedIsExtended()) {
           // If the node is expanded, collapse it
-          toggleNode(selectedNodeId);
+          toggleExpansion(selectedNodeId);
         } else {
           // If the node is not expanded, move to the parent node
           const parentIndex = visibleNodes.findIndex((node) => {
@@ -120,7 +75,7 @@ const useKeyboardInteraction = ({
       },
       Enter: () => {
         if (selectedNodeId) {
-          toggleNode(selectedNodeId);
+          toggleExpansion(selectedNodeId);
         }
       },
       " ": () => {
@@ -138,10 +93,15 @@ const useKeyboardInteraction = ({
     selectNode(nextSelectedId);
   };
 
-  return {
-    isSelectedFn,
-    selectNode,
-    handleKeyDown,
-  };
+  return (
+    <KeyboardContext.Provider
+      value={{
+        onKeyDown,
+      }}
+    >
+      {children}
+    </KeyboardContext.Provider>
+  );
 };
-export default useKeyboardInteraction;
+
+export default KeyboardProvider;

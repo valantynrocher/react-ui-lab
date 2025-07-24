@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import TreeView from "@/components/TreeView";
 import {
   deepTreeData,
   simpleTreeData,
 } from "@/components/TreeView/mockTreeData";
+import type { InternalNode } from "@/components/TreeView/types/nodes";
 import AddBoxOutlinedIcon from "@mui/icons-material/AddBoxOutlined";
 import IndeterminateCheckBoxOutlinedIcon from "@mui/icons-material/IndeterminateCheckBoxOutlined";
 import LabelImportantOutlineIcon from "@mui/icons-material/LabelImportantOutline";
@@ -23,11 +25,11 @@ const meta = {
   argTypes: {
     renderLabel: fn(),
     renderStartIcon: fn(),
-    treeData: {
+    nodes: {
       control: "object",
       description: "Data structure representing the tree",
     },
-    defaultOpenedIds: {
+    defaultExpandedIds: {
       control: "text",
       description: "Array of IDs of initially opened nodes",
     },
@@ -50,23 +52,23 @@ type Story = StoryObj<typeof meta>;
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
 export const SimpleTreeView: Story = {
   args: {
-    treeData: simpleTreeData,
+    nodes: simpleTreeData,
     defaultSelectedId: "",
-    defaultOpenedIds: ["1"],
+    defaultExpandedIds: ["1"],
   },
 };
 
 export const DeepTreeView: Story = {
   args: {
-    treeData: deepTreeData,
+    nodes: deepTreeData,
     defaultSelectedId: "",
-    defaultOpenedIds: ["1", "1-1", "1-1-1"],
+    defaultExpandedIds: ["1", "1-1", "1-1-1"],
   },
 };
 
 export const CustomOpenCloseIcons: Story = {
   args: {
-    treeData: simpleTreeData,
+    nodes: simpleTreeData,
     defaultSelectedId: "",
     slots: {
       ExpandIcon: AddBoxOutlinedIcon,
@@ -80,16 +82,16 @@ export const CustomOpenCloseIcons: Story = {
         color: "secondary",
       },
     },
-    defaultOpenedIds: ["1"],
+    defaultExpandedIds: ["1"],
   },
 };
 
 export const CustomLabel: Story = {
   args: {
-    treeData: simpleTreeData,
+    nodes: simpleTreeData,
     defaultSelectedId: "",
-    defaultOpenedIds: ["1"],
-    renderLabel: (node) => {
+    defaultExpandedIds: ["1"],
+    renderLabel: (node: InternalNode) => {
       return (
         <code
           style={{
@@ -98,7 +100,7 @@ export const CustomLabel: Story = {
             backgroundColor: "lightgray",
           }}
         >
-          {node.label}
+          {(node as any).label}
         </code>
       );
     },
@@ -107,10 +109,10 @@ export const CustomLabel: Story = {
 
 export const CustomStartIcon: Story = {
   args: {
-    treeData: simpleTreeData,
+    nodes: simpleTreeData,
     defaultSelectedId: "",
-    defaultOpenedIds: ["1"],
-    renderStartIcon: (node) => {
+    defaultExpandedIds: ["1"],
+    renderStartIcon: (node: InternalNode) => {
       return node.type === "end" ? <LabelImportantOutlineIcon /> : <></>;
     },
   },

@@ -1,6 +1,6 @@
-import type { TreeNodeType } from "@/components/TreeView/types";
+import type { InternalNode } from "@/components/TreeView/types/nodes";
 
-export const simpleTreeData: TreeNodeType[] = [
+export const simpleTreeData: InternalNode[] = [
   {
     id: "1",
     label: "Root A",
@@ -40,7 +40,7 @@ export const simpleTreeData: TreeNodeType[] = [
   },
 ];
 
-export const deepTreeData: TreeNodeType[] = [
+export const deepTreeData: InternalNode[] = [
   {
     id: "1",
     label: "Root",
