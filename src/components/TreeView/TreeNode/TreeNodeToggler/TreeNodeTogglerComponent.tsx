@@ -14,23 +14,22 @@ const TreeItemIcon = (props: React.ComponentProps<typeof MuiListItemIcon>) => (
 
 const TreeNodeTogglerComponent = ({
   isOpen,
-  onClick,
   hasChildren,
 }: TreeNodeTogglerProps) => {
   const { slots, slotProps } = useCustomizationContext();
 
   const { ExpandIcon, CollapseIcon } = slots;
 
-  return hasChildren ? (
-    <TreeItemIcon onClick={onClick}>
-      {isOpen ? (
-        <CollapseIcon {...slotProps.CollapseIcon} />
-      ) : (
-        <ExpandIcon {...slotProps.ExpandIcon} />
-      )}
+  return (
+    <TreeItemIcon>
+      {hasChildren ? (
+        isOpen ? (
+          <CollapseIcon {...slotProps.CollapseIcon} />
+        ) : (
+          <ExpandIcon {...slotProps.ExpandIcon} />
+        )
+      ) : null}
     </TreeItemIcon>
-  ) : (
-    <TreeItemIcon />
   );
 };
 

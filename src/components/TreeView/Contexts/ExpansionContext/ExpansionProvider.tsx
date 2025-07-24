@@ -39,12 +39,12 @@ const ExpansionProvider = ({
 
   const toggleExpansion = (id: TreeNodeId) => {
     const next = new Set(expandedIds);
-    let action: "open" | "close" = "open";
+    let action: "expand" | "collapse" = "expand";
     const isOpened = next.has(id);
 
     if (isOpened) {
       next.delete(id);
-      action = "close";
+      action = "collapse";
     } else {
       next.add(id);
     }

@@ -17,19 +17,18 @@ const TreeNode = ({ node }: TreeNodeProps) => {
   const isSelected = isSelectedFn(node.id);
   const hasChildren = Array.isArray(node.children) && node.children.length > 0;
 
-  const handleExpansionClick = useCallback(() => {
-    toggleExpansion(node.id);
-  }, [node.id, toggleExpansion]);
+  const handleNodeClick: React.MouseEventHandler<HTMLDivElement> = useCallback(
+    (event) => {
+      if (event.type !== "click") return;
 
-  const handleSelectionClick: React.MouseEventHandler<HTMLDivElement> =
-    useCallback(
-      (event) => {
-        if (event.type !== "click") return;
+      selectNode(node.id);
 
-        selectNode(node.id);
-      },
-      [node.id, selectNode]
-    );
+      if (hasChildren) {
+        toggleExpansion(node.id);
+      }
+    },
+    [hasChildren, node.id, selectNode, toggleExpansion]
+  );
 
   return (
     <li
@@ -42,15 +41,13 @@ const TreeNode = ({ node }: TreeNodeProps) => {
     >
       <ListItemButton
         selected={isSelected}
-        onClick={handleSelectionClick}
+        onClick={handleNodeClick}
         sx={{ pl: node.level * 2 }}
       >
-        <TreeNodeToggler
-          onClick={handleExpansionClick}
-          hasChildren={hasChildren}
-          isOpen={isExpanded}
-        />
+        <TreeNodeToggler hasChildren={hasChildren} isOpen={isExpanded} />
+
         {renderStartIcon?.(node) ?? null}
+
         <ListItemText primary={renderLabel?.(node) ?? node.label} />
       </ListItemButton>
 
