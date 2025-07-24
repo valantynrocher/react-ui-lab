@@ -30,7 +30,7 @@ const useNormalizedNodes = ({
 
         if (!id) {
           throw new Error(
-            "If your node doesn't has a uniq identifier called 'id', you must give the getNodeId props."
+            "If your node doesn't has a uniq identifier called 'id', you must give the 'getNodeId' props."
           );
         }
         id = String(id);
@@ -39,7 +39,7 @@ const useNormalizedNodes = ({
 
         if (!label) {
           throw new Error(
-            "If your node doesn't has a 'label' property', you must give the getNodeLabel props."
+            "If your node doesn't has a 'label' property', you must give the 'getNodeLabel' props."
           );
         }
         label = String(label);
