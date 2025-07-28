@@ -56,11 +56,15 @@ export type TreeViewOptions<S extends ExternalSlots = DefaultSlots> = {
   /**
    * Id of the selected node controlled out of the box
    */
-  selectedId?: TreeNodeId;
+  selectedIds?: TreeNodeId[];
   /**
    * Id of the initial selected node
    */
-  defaultSelectedId?: TreeNodeId;
+  defaultSelectedIds?: TreeNodeId[];
+  /**
+   * Flag to enable selection of multiple nodes
+   */
+  multiSelection?: boolean;
   /**
    * Function to track when a node is selected
    */

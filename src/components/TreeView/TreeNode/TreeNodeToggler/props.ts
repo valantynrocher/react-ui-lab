@@ -1,4 +1,7 @@
+import type { InternalNode, NodeMeta } from "@/components/TreeView/types/nodes";
+
 export interface TreeNodeTogglerProps {
-  isOpen: boolean;
-  hasChildren: boolean;
+  id: InternalNode["id"];
+  hasChildren: InternalNode["_hasChildren"];
+  isExpanded: NodeMeta["_isExpanded"];
 }

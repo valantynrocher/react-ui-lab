@@ -3,7 +3,8 @@ import ExpansionContext from "@/components/TreeView/Contexts/ExpansionContext/Ex
 import type { ExpansionProviderProps } from "@/components/TreeView/Contexts/ExpansionContext/types/ExpansionProviderProps";
 import getVisibleNodes from "@/components/TreeView/Contexts/ExpansionContext/utils/getVisibleNodes";
 import type { TreeNodeId } from "@/components/TreeView/types/nodes";
-import { useCallback, useMemo, useState } from "react";
+import useControllableSet from "@/lib/hooks/useControllableSet";
+import { useCallback } from "react";
 
 const ExpansionProvider = ({
   defaultExpandedIds,
@@ -12,22 +13,9 @@ const ExpansionProvider = ({
   children,
 }: ExpansionProviderProps) => {
   const { nodes } = useDataContext();
-  const [internalExpandedIds, setInternalExpandedIds] = useState<
-    Set<TreeNodeId>
-  >(new Set(defaultExpandedIds));
-
-  const isControlled = controlledExpandedIds !== undefined;
-
-  const expandedIds = useMemo(
-    () => (isControlled ? new Set(controlledExpandedIds) : internalExpandedIds),
-    [controlledExpandedIds, internalExpandedIds, isControlled]
-  );
-
-  const setOpenedIds = useCallback(
-    (next: typeof internalExpandedIds) => {
-      if (!isControlled) setInternalExpandedIds(next);
-    },
-    [isControlled]
+  const [expandedIds, setExpandedIds] = useControllableSet(
+    defaultExpandedIds,
+    controlledExpandedIds
   );
 
   const visibleNodes = getVisibleNodes(nodes, expandedIds);
@@ -40,16 +28,16 @@ const ExpansionProvider = ({
   const toggleExpansion = (id: TreeNodeId) => {
     const next = new Set(expandedIds);
     let action: "expand" | "collapse" = "expand";
-    const isOpened = next.has(id);
+    const isExpanded = next.has(id);
 
-    if (isOpened) {
+    if (isExpanded) {
       next.delete(id);
       action = "collapse";
     } else {
       next.add(id);
     }
 
-    setOpenedIds(next);
+    setExpandedIds(next);
     onExpansionClick?.(id, action);
   };
 

@@ -2,5 +2,8 @@ import type { TreeViewOptions } from "@/components/TreeView/types/TreeViewOption
 import type { PropsWithChildren } from "react";
 
 export type SelectionProviderProps = PropsWithChildren<
-  Pick<TreeViewOptions, "defaultSelectedId" | "selectedId" | "onSelectionClick">
+  Pick<
+    TreeViewOptions,
+    "defaultSelectedIds" | "selectedIds" | "onSelectionClick" | "multiSelection"
+  >
 >;

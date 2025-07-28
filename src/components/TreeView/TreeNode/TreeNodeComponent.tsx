@@ -3,64 +3,81 @@ import { useExpansionContext } from "@/components/TreeView/Contexts/ExpansionCon
 import { useSelectionContext } from "@/components/TreeView/Contexts/SelectionContext";
 import TreeNodeToggler from "@/components/TreeView/TreeNode/TreeNodeToggler";
 import type { TreeNodeProps } from "@/components/TreeView/TreeNode/props";
+import useNodeMeta from "@/components/TreeView/hooks/useNodeMeta";
 import Collapse from "@mui/material/Collapse";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
-import { useCallback } from "react";
+import React, { useCallback } from "react";
 
 const TreeNode = ({ node }: TreeNodeProps) => {
   const { renderLabel, renderStartIcon } = useCustomizationContext();
-  const { toggleExpansion, isExpandedFn } = useExpansionContext();
-  const { selectNode, isSelectedFn } = useSelectionContext();
+  const { toggleExpansion } = useExpansionContext();
+  const { selectNode, multiSelection, isFocusedFn } = useSelectionContext();
+  const { id, label, level, children, _hasChildren } = node;
+  const [getNodeMeta] = useNodeMeta();
+  const { _isExpanded, _isSelected } = getNodeMeta(node);
 
-  const isExpanded = isExpandedFn(node.id);
-  const isSelected = isSelectedFn(node.id);
-  const hasChildren = Array.isArray(node.children) && node.children.length > 0;
-
-  const handleNodeClick: React.MouseEventHandler<HTMLDivElement> = useCallback(
-    (event) => {
+  const handleNodeClick = useCallback(
+    (event: React.MouseEvent) => {
       if (event.type !== "click") return;
 
-      selectNode(node.id);
+      selectNode(id, event);
 
-      if (hasChildren) {
-        toggleExpansion(node.id);
-      }
+      const shouldToggleExpansion = !multiSelection && _hasChildren;
+      if (shouldToggleExpansion) toggleExpansion(id);
     },
-    [hasChildren, node.id, selectNode, toggleExpansion]
+    [_hasChildren, id, multiSelection, selectNode, toggleExpansion]
   );
+
+  const handleContextMenu = (event: React.MouseEvent) => {
+    if (event.ctrlKey || event.metaKey) {
+      event.preventDefault();
+      handleNodeClick(event);
+    }
+  };
 
   return (
     <li
       role="treeitem"
-      aria-expanded={isExpanded}
-      aria-selected={isSelected}
       style={{ listStyle: "none" }}
-      tabIndex={isSelected ? 0 : -1}
-      aria-level={node.level + 1}
+      aria-current={isFocusedFn(id) ? "true" : undefined}
+      aria-expanded={_isExpanded}
+      aria-selected={_isSelected}
+      tabIndex={_isSelected ? 0 : -1}
+      aria-level={level + 1}
     >
       <ListItemButton
-        selected={isSelected}
+        selected={_isSelected}
         onClick={handleNodeClick}
-        sx={{ pl: node.level * 2 }}
+        sx={(theme) => ({
+          pl: level * 2,
+          backgroundColor: isFocusedFn(id)
+            ? theme.palette.action.focus
+            : "initial",
+        })}
+        onContextMenu={handleContextMenu}
       >
-        <TreeNodeToggler hasChildren={hasChildren} isOpen={isExpanded} />
+        <TreeNodeToggler
+          id={id}
+          hasChildren={_hasChildren}
+          isExpanded={_isExpanded}
+        />
 
         {renderStartIcon?.(node) ?? null}
 
-        <ListItemText primary={renderLabel?.(node) ?? node.label} />
+        <ListItemText primary={renderLabel?.(node) ?? label} />
       </ListItemButton>
 
-      {hasChildren ? (
+      {_hasChildren ? (
         <Collapse
-          in={isExpanded}
+          in={_isExpanded}
           timeout="auto"
           unmountOnExit
           component="ul"
-          sx={{ pl: node.level * 2 }}
+          sx={{ pl: level * 2 }}
           role="group"
         >
-          {node.children?.map((childNode) => (
+          {children?.map((childNode) => (
             <TreeNode key={childNode.id} node={childNode} />
           ))}
         </Collapse>

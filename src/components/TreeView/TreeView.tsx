@@ -14,7 +14,7 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import Stack from "@mui/material/Stack";
 
 const splitProps = ({
-  defaultSelectedId = "",
+  defaultSelectedIds = [],
   defaultExpandedIds = [],
   slots,
   slotProps,
@@ -23,11 +23,12 @@ const splitProps = ({
   onSelectionClick,
   onExpansionClick,
   expandedIds,
-  selectedId,
+  selectedIds,
   nodes,
   getNodeChildren,
   getNodeId,
   getNodeLabel,
+  multiSelection,
 }: TreeViewOptions): {
   dataProviderProps: Omit<DataProviderProps, "children">;
   expansionProviderProps: Omit<ExpansionProviderProps, "children">;
@@ -58,9 +59,10 @@ const splitProps = ({
     onExpansionClick,
   },
   selectionProviderProps: {
-    defaultSelectedId,
+    defaultSelectedIds,
     onSelectionClick,
-    selectedId,
+    selectedIds,
+    multiSelection,
   },
 });
 

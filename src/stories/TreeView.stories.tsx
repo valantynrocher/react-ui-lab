@@ -33,9 +33,9 @@ const meta = {
       control: "text",
       description: "Array of IDs of initially expanded nodes",
     },
-    defaultSelectedId: {
+    defaultSelectedIds: {
       control: "text",
-      description: "ID of the initially selected node",
+      description: "Array of IDs of the initially selected nodes",
     },
     slots: {
       control: "object",
@@ -53,7 +53,7 @@ type Story = StoryObj<typeof meta>;
 export const SimpleTreeView: Story = {
   args: {
     nodes: simpleTreeData,
-    defaultSelectedId: "",
+    defaultSelectedIds: [""],
     defaultExpandedIds: ["1"],
   },
 };
@@ -61,7 +61,7 @@ export const SimpleTreeView: Story = {
 export const DeepTreeView: Story = {
   args: {
     nodes: deepTreeData,
-    defaultSelectedId: "",
+    defaultSelectedIds: [""],
     defaultExpandedIds: ["1", "1-1", "1-1-1"],
   },
 };
@@ -69,7 +69,7 @@ export const DeepTreeView: Story = {
 export const CustomOpenCloseIcons: Story = {
   args: {
     nodes: simpleTreeData,
-    defaultSelectedId: "",
+    defaultSelectedIds: [""],
     slots: {
       ExpandIcon: AddBoxOutlinedIcon,
       CollapseIcon: IndeterminateCheckBoxOutlinedIcon,
@@ -89,7 +89,7 @@ export const CustomOpenCloseIcons: Story = {
 export const CustomLabel: Story = {
   args: {
     nodes: simpleTreeData,
-    defaultSelectedId: "",
+    defaultSelectedIds: [""],
     defaultExpandedIds: ["1"],
     renderLabel: (node: InternalNode) => {
       return (
@@ -110,10 +110,19 @@ export const CustomLabel: Story = {
 export const CustomStartIcon: Story = {
   args: {
     nodes: simpleTreeData,
-    defaultSelectedId: "",
+    defaultSelectedIds: [""],
     defaultExpandedIds: ["1"],
     renderStartIcon: (node: InternalNode) => {
       return node.type === "end" ? <LabelImportantOutlineIcon /> : <></>;
     },
+  },
+};
+
+export const MultipleSelection: Story = {
+  args: {
+    nodes: deepTreeData,
+    defaultSelectedIds: [""],
+    defaultExpandedIds: ["1", "1-1", "1-1-1"],
+    multiSelection: true,
   },
 };
