@@ -4,9 +4,8 @@ import type { TreeViewOptions } from "@/components/TreeView/types/TreeViewOption
 import { useEffect, useState } from "react";
 
 /**
- *
- * @param param
- * @returns
+ * Custom hook to normalize the external nodes data
+ * so that fit to internal nodes managment
  */
 const useNormalizedNodes = ({
   nodes: rawNodes,
@@ -46,18 +45,19 @@ const useNormalizedNodes = ({
 
         const children = inputNode.children || getNodeChildren?.(inputNode);
 
-        const hasChildren = Array.isArray(children) && children.length > 0;
+        const _hasChildren = Array.isArray(children) && children.length > 0;
 
         const outputNode: InternalNode = {
           id,
           label,
           level,
           parentId,
-          type: !parentId ? "root" : hasChildren ? "child" : "end",
-          children: hasChildren
+          type: !parentId ? "root" : _hasChildren ? "child" : "end",
+          children: _hasChildren
             ? normalize(children, id, level + 1)
             : undefined,
           originalNode: inputNode,
+          _hasChildren,
         };
 
         return outputNode;

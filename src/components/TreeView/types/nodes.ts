@@ -9,4 +9,10 @@ export type InternalNode<T = unknown> = {
   parentId?: string;
   type: "root" | "child" | "end";
   originalNode?: T;
+  _hasChildren: boolean;
+};
+
+export type NodeMeta = {
+  _isExpanded: boolean;
+  _isSelected: boolean;
 };
